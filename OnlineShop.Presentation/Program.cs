@@ -1,41 +1,37 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using OnlineShop.Presentation;
+using Swashbuckle.AspNetCore.SwaggerUI;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddControllers();
+//builder.Services.AddApiVersioning(options =>
+//{
+//    options.DefaultApiVersion = new ApiVersion(1, 0);
+//    options.AssumeDefaultVersionWhenUnspecified = true;
+//    options.ReportApiVersions = true;
+//    options.ApiVersionReader = new UrlSegmentApiVersionReader();
+//});
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new() { Title = "Online Shop API", Version = "v1" });
+});
+builder.Services.AddDependencies(builder.Configuration);
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
 app.UseHttpsRedirection();
-
-var summaries = new[]
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Online Shop API v1");
+    c.RoutePrefix = string.Empty; // Swagger at root URL
+});
+//app.UseMiddleware<ExceptionMiddleware>();
+app.UseAuthorization();
+app.MapControllers();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

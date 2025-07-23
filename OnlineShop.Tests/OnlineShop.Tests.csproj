@@ -17,6 +17,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OnlineShop.Application\OnlineShop.Application.csproj" />
+    <ProjectReference Include="..\OnlineShop.Domain\OnlineShop.Domain.csproj" />
+    <ProjectReference Include="..\OnlineShop.Infrastructure\OnlineShop.Infrastructure.csproj" />
+    <ProjectReference Include="..\OnlineShop.Presentation\OnlineShop.Presentation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 
